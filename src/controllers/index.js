@@ -1,9 +1,7 @@
-import userController from './userController.js';
-import mediaController from './mediaController.js';
-import webhookController from './webhookController.js';
+import * as userController from "./userController.js";
+import * as mediaController from "./mediaController.js";
+import * as webhookController from "./webhookController.js";
+import * as modelController from "./modelController.js";
 
-export { 
-    userController, 
-    mediaController,
-    webhookController 
-};
+// Export all controllers as named exports
+export { userController, mediaController, webhookController, modelController };
