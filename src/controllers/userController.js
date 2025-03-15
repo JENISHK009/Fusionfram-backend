@@ -7,17 +7,15 @@ import {
     generateToken 
 } from '../utils/index.js';
 
-const SALT_ROUNDS = 10;
-
 export async function signup(req, res) {
     try {
-        const { email, password } = req.body;
+        const { email } = req.body;
 
         // Validate input
-        if (!email || !password) {
+        if (!email) {
             return res.status(400).json({ 
                 success: false, 
-                message: 'Email and password are required' 
+                message: 'Email is required' 
             });
         }
 
@@ -33,15 +31,13 @@ export async function signup(req, res) {
         // Check for existing user
         const existingUser = await User.findOne({ email, isDeleted: false });
 
-        // Generate OTP and hash password
+        // Generate OTP and set expiry
         const otp = generateOTP();
         const otpExpiry = getOTPExpiry();
-        const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
         if (existingUser) {
             // Update existing inactive user
             if (!existingUser.isActive) {
-                existingUser.password = hashedPassword;
                 existingUser.otp = { code: otp, expiry: otpExpiry };
                 await existingUser.save();
 
@@ -63,7 +59,6 @@ export async function signup(req, res) {
         // Create new user
         const newUser = new User({
             email,
-            password: hashedPassword,
             isActive: false,
             isDeleted: false,
             otp: { code: otp, expiry: otpExpiry }
@@ -118,17 +113,21 @@ export async function deleteAccount(req, res) {
     }
 }
 
+const SALT_ROUNDS = 10; // Salt rounds for password hashing
+
 export async function verifyOTP(req, res) {
     try {
-        const { email, otp } = req.body;
+        const { email, otp, password } = req.body;
 
-        if (!email || !otp) {
+        // Validate input
+        if (!email || !otp || !password) {
             return res.status(400).json({
                 success: false,
-                message: 'Email and OTP are required'
+                message: 'Email, OTP, and password are required'
             });
         }
 
+        // Find the user
         const user = await User.findOne({ email });
         if (!user) {
             return res.status(404).json({
@@ -145,9 +144,13 @@ export async function verifyOTP(req, res) {
             });
         }
 
-        // Activate user and clear OTP
+        // Hash the new password
+        const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+
+        // Activate user, update password, and clear OTP
         user.isActive = true;
-        user.otp = undefined;
+        user.password = hashedPassword;
+        user.otp = undefined; // Clear OTP after verification
         await user.save();
 
         // Generate token
@@ -155,7 +158,7 @@ export async function verifyOTP(req, res) {
 
         res.status(200).json({
             success: true,
-            message: 'Email verified successfully',
+            message: 'Email verified and password set successfully',
             data: {
                 token,
                 user: {
