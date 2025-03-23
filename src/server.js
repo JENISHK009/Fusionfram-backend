@@ -7,6 +7,7 @@ import {
   mediaRoutes,
   webhookRoutes,
   modelRoutes,
+  suscriptionRoutes,
 } from "./routes/index.js";
 
 const app = express();
@@ -24,6 +25,7 @@ app.use("/users", userRoutes);
 app.use("/media", mediaRoutes);
 app.use("/webhook", webhookRoutes);
 app.use("/model", modelRoutes);
+app.use("/suscription", suscriptionRoutes);
 
 
 // Basic route

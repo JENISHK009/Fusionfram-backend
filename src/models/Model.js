@@ -6,7 +6,17 @@ const modelSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    thumbnail : {
+    title: {
+        type: String,
+        required: true, // Title is required
+        trim: true
+    },
+    description: {
+        type: String,
+        required: true, // Description is required
+        trim: true
+    },
+    thumbnail: {
         type: String,
         required: true,
     },
@@ -89,6 +99,10 @@ const modelSchema = new mongoose.Schema({
     scheduler: {
         type: String,
         default: "PNDMScheduler"
+    },
+    isActive: {
+        type: Boolean,
+        default: true // Default value is true
     }
 }, {
     timestamps: true,

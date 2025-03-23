@@ -5,11 +5,17 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         trim: true,
-        lowercase: true
+        lowercase: true,
+        unique: true
     },
     password: {
-        type: String,
-        required: true
+        type: String
+    },
+    roleId: {
+        type: mongoose.Schema.Types.ObjectId, // Reference to the Role model
+        ref: 'Role',
+        required: true,
+        default: null // Default role will be set programmatically
     },
     isActive: {
         type: Boolean,
@@ -32,4 +38,4 @@ const userSchema = new mongoose.Schema({
     versionKey: false
 });
 
-export default mongoose.model('User', userSchema); 
+export default mongoose.model('User', userSchema);

@@ -22,17 +22,27 @@ export async function addModel(req, res) {
 
 export async function getAllModels(req, res) {
   try {
-    const models = await Model.find();
-    res.status(200).json({
-      success: true,
-      data: models,
-    });
+      const { status } = req.query; // Get the status query parameter
+
+      // Define the filter object
+      const filter = {};
+      if (status !== undefined) {
+          filter.isActive = status === 'true'; // Convert string to boolean
+      }
+
+      // Fetch models based on the filter
+      const models = await Model.find(filter);
+
+      res.status(200).json({
+          success: true,
+          data: models,
+      });
   } catch (error) {
-    console.error("Error fetching models:", error);
-    res.status(500).json({
-      success: false,
-      message: "Error fetching models",
-    });
+      console.error("Error fetching models:", error);
+      res.status(500).json({
+          success: false,
+          message: "Error fetching models",
+      });
   }
 }
 
