@@ -23,5 +23,7 @@ router.post(
   "/generatePaymentLink",
   subscriptionController.generatePaymentLink
 );
+router.post('/ipn-callback', subscriptionController.handleIPNCallback);
+
 
 export default router;

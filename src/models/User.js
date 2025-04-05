@@ -12,10 +12,15 @@ const userSchema = new mongoose.Schema({
         type: String
     },
     roleId: {
-        type: mongoose.Schema.Types.ObjectId, // Reference to the Role model
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'Role',
         required: true,
-        default: null // Default role will be set programmatically
+        default: null
+    },
+    points: {
+        type: Number,
+        default: 0,
+        min: 0
     },
     isActive: {
         type: Boolean,
